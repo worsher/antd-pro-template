@@ -6,8 +6,10 @@ import type { RunTimeLayoutConfig } from '@umijs/max';
 import { history, Link } from '@umijs/max';
 import defaultSettings from '../config/defaultSettings';
 import { errorConfig } from './requestErrorConfig';
-import { currentUser as queryCurrentUser } from '@/services/ant-design-pro/api';
+import { getUserInfo as queryCurrentUser } from '@/services/auth/user';
 import React from 'react';
+import { getRouters } from './services/ruoyi/caidanxinxi';
+import { formatMenu } from './utils/tools';
 const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/user/login';
 
@@ -22,10 +24,27 @@ export async function getInitialState(): Promise<{
 }> {
   const fetchUserInfo = async () => {
     try {
-      const msg = await queryCurrentUser({
-        skipErrorHandler: true,
-      });
-      return msg.data;
+      const msg = await queryCurrentUser();
+      const user = msg.data?.user || {};
+      user.name = user.nickName;
+      user.avatar =
+        user?.avatar || 'https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png';
+      // 对应route中的access字段，暂时没用
+      // user.access = "admin";
+      user.permissions = msg.data.permissions;
+
+      // 获取菜单
+      const { data } = await getRouters();
+      // 先过滤当前项目的菜单，然后如果外侧包裹了Layout，再去除
+      const menus =
+        data?.reduce((pre: any, item: any) => {
+          // if(item.component === "Layout") {
+          //   return [...pre, ...(item.children || [])]
+          // }
+          return [...pre, item];
+        }, []) || [];
+      user.menus = menus;
+      return user;
     } catch (error) {
       history.push(loginPath);
     }
@@ -60,6 +79,16 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     },
     waterMarkProps: {
       content: initialState?.currentUser?.name,
+    },
+    menu: {
+      locale: true,
+      mode: 'inline',
+      request: async () => {
+        const menus = initialState?.currentUser?.menus || [];
+        // 复制一份，以防止有地方篡改
+        // 照顾效率，仅作浅备份
+        return formatMenu(menus);
+      },
     },
     footerRender: () => <Footer />,
     onPageChange: () => {

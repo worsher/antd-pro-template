@@ -9,7 +9,7 @@ export async function authBinding(
   options?: { [key: string]: any },
 ) {
   const { source: param0, ...queryParams } = params;
-  return request<API.RString>(`/auth/binding/${param0}`, {
+  return request<API.RString>(`/prod-api/auth/binding/${param0}`, {
     method: 'GET',
     params: {
       ...queryParams,
@@ -20,7 +20,7 @@ export async function authBinding(
 
 /** 登录方法 登录方法 POST /auth/login */
 export async function login(body: API.LoginBody, options?: { [key: string]: any }) {
-  return request<API.RLoginVo>('/auth/login', {
+  return request<API.RLoginVo>('/prod-api/auth/login', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -32,7 +32,7 @@ export async function login(body: API.LoginBody, options?: { [key: string]: any 
 
 /** 登出方法 登出方法 POST /auth/logout */
 export async function logout(options?: { [key: string]: any }) {
-  return request<API.RVoid>('/auth/logout', {
+  return request<API.RVoid>('/prod-api/auth/logout', {
     method: 'POST',
     ...(options || {}),
   });
@@ -40,7 +40,7 @@ export async function logout(options?: { [key: string]: any }) {
 
 /** 用户注册 用户注册 POST /auth/register */
 export async function register(body: API.RegisterBody, options?: { [key: string]: any }) {
-  return request<API.RVoid>('/auth/register', {
+  return request<API.RVoid>('/prod-api/auth/register', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -52,7 +52,7 @@ export async function register(body: API.RegisterBody, options?: { [key: string]
 
 /** 第三方登录回调业务处理 绑定授权 第三方登录回调业务处理 绑定授权 POST /auth/social/callback */
 export async function socialCallback(body: API.LoginBody, options?: { [key: string]: any }) {
-  return request<API.RVoid>('/auth/social/callback', {
+  return request<API.RVoid>('/prod-api/auth/social/callback', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -64,7 +64,7 @@ export async function socialCallback(body: API.LoginBody, options?: { [key: stri
 
 /** 登录页面租户下拉框 登录页面租户下拉框 GET /auth/tenant/list */
 export async function tenantList(options?: { [key: string]: any }) {
-  return request<API.RLoginTenantVo>('/auth/tenant/list', {
+  return request<API.RLoginTenantVo>('/prod-api/auth/tenant/list', {
     method: 'GET',
     ...(options || {}),
   });
@@ -77,7 +77,7 @@ export async function unlockSocial(
   options?: { [key: string]: any },
 ) {
   const { socialId: param0, ...queryParams } = params;
-  return request<API.RVoid>(`/auth/unlock/${param0}`, {
+  return request<API.RVoid>(`/prod-api/auth/unlock/${param0}`, {
     method: 'DELETE',
     params: { ...queryParams },
     ...(options || {}),

@@ -56,7 +56,7 @@ export async function remove7(
 
 /** 获取路由信息 获取路由信息 GET /system/menu/getRouters */
 export async function getRouters(options?: { [key: string]: any }) {
-  return request<API.RListRouterVo>('/system/menu/getRouters', {
+  return request<API.RListRouterVo>('/prod-api/system/menu/getRouters', {
     method: 'GET',
     ...(options || {}),
   });
