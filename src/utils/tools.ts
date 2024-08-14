@@ -11,3 +11,14 @@ export const formatMenu = (menus: any[]) => {
     return menu;
   });
 };
+
+export const getMenuNameList = (menus: any[]) => {
+  let list: any[] = [];
+  menus.forEach((item: any) => {
+    list.push(item.name);
+    if (item.children) {
+      list = [...list, ...getMenuNameList(item.children)];
+    }
+  });
+  return list;
+};
