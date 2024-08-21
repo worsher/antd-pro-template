@@ -10,7 +10,7 @@ export async function login(data: any) {
   return request('/prod-api/auth/login', {
     method: 'POST',
     data,
-    isEncrypt: true,
+    isEncrypt: false,
   });
 }
 

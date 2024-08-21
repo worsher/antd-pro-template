@@ -56,3 +56,15 @@ export async function updateTenant(body: API.SysTenantBo, options?: { [key: stri
     ...(options || {}),
   });
 }
+
+/** 状态修改 状态修改 PUT /system/tenant/changeStatus */
+export async function changeStatus(body: API.SysTenantBo, options?: { [key: string]: any }) {
+  return request<API.RVoid>('/prod-api/system/tenant/changeStatus', {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  });
+}

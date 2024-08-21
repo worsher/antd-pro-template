@@ -2,15 +2,36 @@ import { BetaSchemaForm, ModalForm, ProTable } from '@ant-design/pro-components'
 import useTenantColumns from './models/columns';
 import useTenantData from './models/useData';
 import { useMemo, useRef } from 'react';
-import { Button, Popconfirm } from 'antd';
+import { Button, Popconfirm, Switch } from 'antd';
 
 const SystemTenantManage = () => {
   const { listColumns, createColumns } = useTenantColumns();
   const actionRef = useRef<any>(null);
-  const { getList, create, update, remove } = useTenantData(actionRef);
+  const { getList, create, update, remove, switchStatus } = useTenantData(actionRef);
 
   const listSchema = useMemo(() => {
-    const columns = [...listColumns];
+    const columns = listColumns.map((column) => {
+      if (column.key === 'status') {
+        return {
+          ...column,
+          render: (_: any, record: any) => {
+            return (
+              <Switch
+                checked={record.status === '0'}
+                onChange={() =>
+                  switchStatus({
+                    id: record.id,
+                    status: record.status === '0' ? '1' : '0',
+                    tenantId: record.tenantId,
+                  })
+                }
+              />
+            );
+          },
+        };
+      }
+      return column;
+    });
     columns.push({
       title: '操作',
       key: 'action',
@@ -26,8 +47,8 @@ const SystemTenantManage = () => {
             labelCol={{ style: { width: '100px' } }}
             onFinish={async (formData) => {
               return await update({
+                ...record,
                 ...formData,
-                id: record.id,
               });
             }}
           >

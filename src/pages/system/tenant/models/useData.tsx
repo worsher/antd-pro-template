@@ -1,4 +1,10 @@
-import { getTenantList, createTenant, deleteTenant, updateTenant } from '@/services/ruoyi/tenant';
+import {
+  getTenantList,
+  createTenant,
+  deleteTenant,
+  updateTenant,
+  changeStatus,
+} from '@/services/ruoyi/tenant';
 
 function useTenantData(ref?: any) {
   const getList = async (params: any) => {
@@ -42,7 +48,17 @@ function useTenantData(ref?: any) {
     }
   };
 
-  return { getList, create, remove, update };
+  const switchStatus = async (params: any) => {
+    try {
+      await changeStatus(params);
+      ref.current.reload();
+      return true;
+    } catch (e) {
+      return false;
+    }
+  };
+
+  return { getList, create, remove, update, switchStatus };
 }
 
 export default useTenantData;

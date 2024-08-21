@@ -4,7 +4,8 @@ import { ProColumns, ProFormColumnsType } from '@ant-design/pro-components';
 import { Switch } from 'antd';
 
 // const titlePre = "tenant";
-const oriColumns: Record<string, OriColumnType> = {
+// 租户的字段配置
+const TenantColumns: Record<string, OriColumnType> = {
   id: {
     title: 'id',
     dataIndex: 'id',
@@ -77,6 +78,48 @@ const oriColumns: Record<string, OriColumnType> = {
   },
 };
 
+// 租户套餐的字段配置
+const TenantPackageColumns: Record<string, OriColumnType> = {
+  packageId: {
+    title: '套餐id',
+    dataIndex: 'packageId',
+    key: 'packageId',
+  },
+  packageName: {
+    title: '套餐名称',
+    dataIndex: 'packageName',
+    key: 'packageName',
+  },
+  menuIds: {
+    title: '关联菜单',
+    dataIndex: 'menuIds',
+    key: 'menuIds',
+  },
+  remark: {
+    title: '备注',
+    dataIndex: 'remark',
+    key: 'remark',
+  },
+  menuCheckStrictly: {
+    title: '父子联动',
+    dataIndex: 'menuCheckStrictly',
+    key: 'menuCheckStrictly',
+    valueType: 'switch',
+    render: (_: any, record: any) => {
+      return <Switch checked={record.menuCheckStrictly} />;
+    },
+  },
+  status: {
+    title: '状态',
+    dataIndex: 'status',
+    key: 'status',
+    valueType: 'switch',
+    render: (_: any, record: any) => {
+      return <Switch checked={record.status === '0'} />;
+    },
+  },
+};
+
 function useTenantColumns() {
   const { useCommonColumnsParse } = useColumns();
   // table配置
@@ -88,7 +131,7 @@ function useTenantColumns() {
     'expireTime',
     'status',
   ];
-  const listColumns: ProColumns[] = useCommonColumnsParse(oriColumns, listKeys, undefined, {
+  const listColumns: ProColumns[] = useCommonColumnsParse(TenantColumns, listKeys, undefined, {
     search: ['tenantId', 'contactUserName', 'contactPhone', 'companyName'],
   }) as ProColumns[];
 
@@ -103,14 +146,25 @@ function useTenantColumns() {
     'remark',
   ];
   const createColumns: ProFormColumnsType[] = useCommonColumnsParse(
-    oriColumns,
+    TenantColumns,
     createKeys,
     undefined,
     {
       required: ['contactUserName', 'contactPhone', 'companyName'],
     },
   ) as ProFormColumnsType[];
-  return { listColumns, createColumns };
+
+  const packageListKeys = ['packageId', 'packageName', 'status'];
+  const packageListColumns: ProColumns[] = useCommonColumnsParse(
+    TenantPackageColumns,
+    packageListKeys,
+    undefined,
+    {
+      search: ['packageName'],
+    },
+  ) as ProColumns[];
+
+  return { listColumns, createColumns, packageListColumns };
 }
 
 export default useTenantColumns;

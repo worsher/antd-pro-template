@@ -7,7 +7,7 @@ export default function access(initialState: { currentUser?: API.CurrentUser } |
   const { currentUser } = initialState ?? {};
   const { permissions, menus = [] } = currentUser ?? {};
   const accessRoutes = getMenuNameList(menus);
-  console.log(accessRoutes);
+
   return {
     canAdmin: currentUser && currentUser.access === 'admin',
     canAccess: (permission: string) => permissions?.includes(permission),
