@@ -35,7 +35,6 @@ export const errorConfig: RequestConfig = {
   // 请求拦截器
   requestInterceptors: [
     (config: RequestOptions) => {
-      console.log(config);
       // 拦截请求配置，进行个性化处理。
       const headers = config?.headers || {};
       headers['Authorization'] = 'Bearer ' + (Cookies.get('ACCESS_TOKEN') || '');

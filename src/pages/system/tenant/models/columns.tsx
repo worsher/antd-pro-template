@@ -1,7 +1,9 @@
 import useColumns from '@/models/useColumns';
 import type { OriColumnType } from '@/models/useColumns';
 import { ProColumns, ProFormColumnsType } from '@ant-design/pro-components';
-import { Switch } from 'antd';
+import { FormInstance, Switch } from 'antd';
+import { treeselect } from '@/services/ruoyi/tenantManage';
+import { getTenantPackageSelectList } from '@/services/ruoyi/tenantManage';
 
 // const titlePre = "tenant";
 // 租户的字段配置
@@ -25,6 +27,36 @@ const TenantColumns: Record<string, OriColumnType> = {
     title: '联系电话',
     dataIndex: 'contactPhone',
     key: 'contactPhone',
+  },
+  username: {
+    title: '用户名',
+    dataIndex: 'username',
+    key: 'username',
+  },
+  password: {
+    title: '用户密码',
+    dataIndex: 'password',
+    key: 'password',
+  },
+  packageId: {
+    title: '租户套餐',
+    dataIndex: 'packageId',
+    key: 'packageId',
+    fieldProps: (form: FormInstance) => {
+      return {
+        disabled: form.getFieldValue('id'),
+      };
+    },
+    valueType: 'select',
+    request: async () => {
+      const res = await getTenantPackageSelectList();
+      return (
+        res.data?.map((item: any) => ({
+          label: item.packageName,
+          value: item.packageId,
+        })) || []
+      );
+    },
   },
   companyName: {
     title: '企业名称',
@@ -51,11 +83,6 @@ const TenantColumns: Record<string, OriColumnType> = {
     dataIndex: 'remark',
     key: 'remark',
   },
-  packageId: {
-    title: '租户套餐编号',
-    dataIndex: 'packageId',
-    key: 'packageId',
-  },
   expireTime: {
     title: '过期时间',
     dataIndex: 'expireTime',
@@ -78,6 +105,22 @@ const TenantColumns: Record<string, OriColumnType> = {
   },
 };
 
+const menusDataTransform = (data: any[]): { label: string; value: string; children?: any[] }[] => {
+  if (!data) return [];
+  return data.map((item: { label: string; id: string; children?: any[] }) => {
+    if (item.children) {
+      return {
+        label: item.label,
+        value: String(item.id),
+        children: menusDataTransform(item.children),
+      };
+    }
+    return {
+      label: item.label,
+      value: String(item.id),
+    };
+  });
+};
 // 租户套餐的字段配置
 const TenantPackageColumns: Record<string, OriColumnType> = {
   packageId: {
@@ -107,6 +150,23 @@ const TenantPackageColumns: Record<string, OriColumnType> = {
     valueType: 'switch',
     render: (_: any, record: any) => {
       return <Switch checked={record.menuCheckStrictly} />;
+    },
+  },
+  menus: {
+    title: '关联菜单',
+    dataIndex: 'menuIds',
+    key: 'menuIds',
+    valueType: 'treeSelect',
+    dependencies: ['menuCheckStrictly'],
+    fieldProps: (form: FormInstance) => {
+      return {
+        treeCheckable: true,
+        treeCheckStrictly: !form.getFieldValue('menuCheckStrictly'),
+      };
+    },
+    request: async () => {
+      const res = await treeselect();
+      return menusDataTransform(res.data as any[]);
     },
   },
   status: {
@@ -140,6 +200,20 @@ function useTenantColumns() {
     'companyName',
     'contactUserName',
     'contactPhone',
+    'username',
+    'password',
+    'packageId',
+    'expireTime',
+    'accountCount',
+    'domain',
+    'remark',
+  ];
+
+  const editKeys = [
+    'companyName',
+    'contactUserName',
+    'contactPhone',
+    'packageId',
     'expireTime',
     'accountCount',
     'domain',
@@ -150,11 +224,34 @@ function useTenantColumns() {
     createKeys,
     undefined,
     {
-      required: ['contactUserName', 'contactPhone', 'companyName'],
+      required: [
+        'contactUserName',
+        'contactPhone',
+        'companyName',
+        'username',
+        'password',
+        'packageId',
+      ],
     },
   ) as ProFormColumnsType[];
 
-  const packageListKeys = ['packageId', 'packageName', 'status'];
+  const editColumns: ProFormColumnsType[] = useCommonColumnsParse(
+    TenantColumns,
+    editKeys,
+    undefined,
+    {
+      required: [
+        'contactUserName',
+        'contactPhone',
+        'companyName',
+        'username',
+        'password',
+        'packageId',
+      ],
+    },
+  ) as ProFormColumnsType[];
+
+  const packageListKeys = ['packageName', 'remark', 'status'];
   const packageListColumns: ProColumns[] = useCommonColumnsParse(
     TenantPackageColumns,
     packageListKeys,
@@ -164,7 +261,17 @@ function useTenantColumns() {
     },
   ) as ProColumns[];
 
-  return { listColumns, createColumns, packageListColumns };
+  const packageCreateKeys = ['packageName', 'remark', 'menuCheckStrictly', 'menus'];
+  const packageCreateColumns: ProFormColumnsType[] = useCommonColumnsParse(
+    TenantPackageColumns,
+    packageCreateKeys,
+    undefined,
+    {
+      required: ['packageName'],
+    },
+  ) as ProFormColumnsType[];
+
+  return { listColumns, createColumns, editColumns, packageListColumns, packageCreateColumns };
 }
 
 export default useTenantColumns;

@@ -5,7 +5,7 @@ import { useMemo, useRef } from 'react';
 import { Button, Popconfirm, Switch } from 'antd';
 
 const SystemTenantManage = () => {
-  const { listColumns, createColumns } = useTenantColumns();
+  const { listColumns, createColumns, editColumns } = useTenantColumns();
   const actionRef = useRef<any>(null);
   const { getList, create, update, remove, switchStatus } = useTenantData(actionRef);
 
@@ -52,13 +52,15 @@ const SystemTenantManage = () => {
               });
             }}
           >
-            <BetaSchemaForm columns={createColumns} layoutType="Embed"></BetaSchemaForm>
+            <div style={{ width: '100%', maxWidth: '400px', margin: '0 auto' }}>
+              <BetaSchemaForm columns={editColumns} layoutType="Embed"></BetaSchemaForm>
+            </div>
           </ModalForm>,
           <Popconfirm
             key={`deleteTenant-${record.id}`}
             title="确认删除?"
             onConfirm={() => {
-              remove({ id: record.id });
+              remove({ ids: [record.id] });
             }}
           >
             <Button type="link">删除</Button>
