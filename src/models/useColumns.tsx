@@ -49,11 +49,29 @@ function useColumnsParse() {
 
       // 是否有必填设置
       if (required && required.length > 0) {
-        const formItemProps: FormItemProps | Record<string, any> = curColumns?.formItemProps || {};
-        curColumns.formItemProps = {
-          ...formItemProps,
-          rules: [...(formItemProps?.rules ?? []), { required: required.includes(key) }],
-        };
+        if (typeof curColumns.formItemProps === 'function') {
+          const formItemProps = curColumns.formItemProps;
+          curColumns.formItemProps = (form: any) => {
+            const oriFormItemProps = formItemProps(form);
+            return {
+              ...oriFormItemProps,
+              rules: [
+                ...(oriFormItemProps?.rules ?? []),
+                { required: oriFormItemProps?.hidden ? false : required.includes(key) },
+              ],
+            };
+          };
+        } else {
+          const formItemProps: FormItemProps | Record<string, any> =
+            curColumns?.formItemProps || {};
+          curColumns.formItemProps = {
+            ...formItemProps,
+            rules: [
+              ...(formItemProps?.rules ?? []),
+              { required: formItemProps?.hidden ? false : required.includes(key) },
+            ],
+          };
+        }
       }
       // 是否有下拉选项
       if (curColumns.valueType === 'select' && !curColumns.request && !curColumns.valueEnum) {
