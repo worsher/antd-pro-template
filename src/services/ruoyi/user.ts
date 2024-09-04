@@ -41,3 +41,11 @@ export async function getUserInfo(data: API.getInfo1Params) {
     params: { ...queryParams },
   });
 }
+
+// 重置密码
+export async function resetPwd(data: API.SysUserBo) {
+  return request<API.RVoid>('/prod-api/system/user/resetPwd', {
+    method: 'PUT',
+    data,
+  });
+}

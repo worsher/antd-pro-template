@@ -128,7 +128,7 @@ declare namespace API {
 
   type getInfo1Params = {
     /** 用户ID */
-    userId: number;
+    userId: number | string;
   };
 
   type getInfo3Params = {
@@ -377,7 +377,7 @@ declare namespace API {
 
   type removeParams = {
     /** 角色ID串 */
-    userIds: number[];
+    userIds: Array<number | string> | string | number;
   };
 
   type RListRouterVo = {

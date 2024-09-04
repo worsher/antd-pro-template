@@ -1,6 +1,9 @@
 import useColumns, { OriColumnType } from '@/models/useColumns';
+import { FormInstance } from 'antd';
+import useUserData from './useData';
 
 function useUserColumns() {
+  const { getDeptList, getInfo } = useUserData();
   const userColumns: Record<string, OriColumnType> = {
     userId: {
       title: '用户ID',
@@ -13,9 +16,14 @@ function useUserColumns() {
       key: 'tenantId',
     },
     deptId: {
-      title: '部门ID',
+      title: '所属部门',
       dataIndex: 'deptId',
       key: 'deptId',
+      valueType: 'treeSelect',
+      request: async () => {
+        const res = await getDeptList();
+        return res;
+      },
     },
     userName: {
       title: '用户账号',
@@ -86,25 +94,82 @@ function useUserColumns() {
       dataIndex: 'createTime',
       key: 'createTime',
     },
+    password: {
+      title: '用户密码',
+      dataIndex: 'password',
+      key: 'password',
+      valueType: 'password',
+      fieldProps: {
+        autoComplete: 'off',
+      },
+      dependencies: ['userId'],
+      formItemProps: (form: FormInstance) => {
+        const characters =
+          'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+';
+        let result = '';
+        for (let i = 0; i < 12; i++) {
+          result += characters.charAt(Math.floor(Math.random() * characters.length));
+        }
+        if (form.getFieldValue('userId')) {
+          return {
+            hidden: true,
+            initialValue: result,
+          };
+        }
+        return {
+          initialValue: result,
+        };
+      },
+    },
+    postIds: {
+      title: '岗位',
+      dataIndex: 'postIds',
+      key: 'postIds',
+      valueType: 'select',
+    },
+    roleIds: {
+      title: '角色',
+      dataIndex: 'roleIds',
+      key: 'roleIds',
+      valueType: 'select',
+      dependencies: ['userId'],
+      fieldProps: {
+        mode: 'multiple',
+      },
+      request: async ({ userId }) => {
+        const res = await getInfo(userId);
+        const roles = res?.data?.roles || [];
+        return roles.map((role: any) => ({
+          label: role.roleName,
+          value: role.roleId,
+        }));
+      },
+    },
   };
   const { useCommonColumnsParse } = useColumns();
-  const listKeys = [
-    'userName',
+  const listKeys = ['userName', 'nickName', 'deptId', 'phonenumber', 'status', 'createTime'];
+  const listColumns = useCommonColumnsParse(userColumns, listKeys, undefined, {
+    search: ['userName', 'phonenumber', 'status', 'deptId'],
+  });
+
+  const editKeys = [
     'nickName',
-    'userType',
-    'email',
+    'deptId',
     'phonenumber',
+    'email',
+    'userName',
+    'password',
     'sex',
-    'avatar',
     'status',
-    'loginIp',
-    'loginDate',
+    'roleIds',
     'remark',
-    'createTime',
   ];
-  const listColumns = useCommonColumnsParse(userColumns, listKeys);
+  const editColumns = useCommonColumnsParse(userColumns, editKeys, undefined, {
+    required: ['nickName', 'deptId', 'userName', 'password', 'status'],
+  });
   return {
     listColumns,
+    editColumns,
   };
 }
 
