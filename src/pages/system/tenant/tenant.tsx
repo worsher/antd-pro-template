@@ -91,6 +91,7 @@ const SystemTenantManage = () => {
 
   return (
     <ProTable
+      rowKey="id"
       actionRef={actionRef}
       toolBarRender={() => {
         return [createModal];

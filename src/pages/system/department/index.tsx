@@ -64,6 +64,7 @@ const SystemDepartmentManage = () => {
   return (
     <>
       <ProTable
+        rowKey="deptId"
         actionRef={actionRef}
         toolBarRender={() => {
           return [

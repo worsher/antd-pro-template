@@ -76,6 +76,7 @@ const SystemUserManage = () => {
   return (
     <>
       <ProTable
+        rowKey="userId"
         actionRef={actionRef}
         toolBarRender={() => [
           <Button

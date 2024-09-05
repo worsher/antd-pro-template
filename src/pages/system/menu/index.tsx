@@ -77,6 +77,7 @@ const MenuMange = () => {
   return (
     <>
       <ProTable
+        rowKey="menuId"
         actionRef={actionRef}
         toolBarRender={() => {
           return [
