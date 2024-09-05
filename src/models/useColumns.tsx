@@ -6,6 +6,7 @@ import { useIntl } from '@umijs/max';
 export type OriColumnType = ProColumns & {
   langKey?: string;
   noTranslate?: boolean;
+  request?: () => Promise<any>;
 };
 
 function useColumnsParse() {
@@ -25,7 +26,7 @@ function useColumnsParse() {
       }
     }, []);
 
-    const { search = [], required = [], sort = [], copy = [] } = externalConfig;
+    const { search = [], required = [], sort = [], copy = [], readonly = [] } = externalConfig;
 
     const columns = config.map((item) => {
       let key = typeof item === 'string' ? item : item.key;
@@ -93,6 +94,11 @@ function useColumnsParse() {
       // 是否需要支持复制
       if (copy && copy.length > 0) {
         curColumns.copyable = copy.includes(key);
+      }
+
+      // 是否有只读属性
+      if (readonly && readonly.length > 0) {
+        curColumns.readonly = readonly.includes(key);
       }
 
       return {

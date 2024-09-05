@@ -24,6 +24,13 @@ export const SystemRouter = [
         access: 'canAccessRoute',
         accessName: 'Dept',
       },
+      {
+        path: 'role',
+        name: 'role',
+        component: './system/role/index',
+        access: 'canAccessRoute',
+        accessName: 'Role',
+      },
     ],
   },
 ];
