@@ -2,9 +2,10 @@ import { BetaSchemaForm, ModalForm, ProFormText, ProTable } from '@ant-design/pr
 import useUserColumns from './models/columns';
 import { Button, message, Popconfirm } from 'antd';
 import { useMemo, useState, useRef } from 'react';
-import { DeleteOutlined, EditOutlined, LockOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, LockOutlined, UserOutlined } from '@ant-design/icons';
 import useUserData from './models/useData';
 import type { ActionType } from '@ant-design/pro-components';
+import { useNavigate } from '@umijs/max';
 
 const SystemUserManage = () => {
   const { listColumns, editColumns } = useUserColumns();
@@ -12,6 +13,7 @@ const SystemUserManage = () => {
   const [visible, setVisible] = useState(false);
   const [editInitData, setEditInitData] = useState<any>(null);
   const actionRef = useRef<ActionType>(null);
+  const navigate = useNavigate();
 
   const schema = useMemo(() => {
     const columns = [...listColumns];
@@ -69,6 +71,15 @@ const SystemUserManage = () => {
             rules={[{ required: true, message: '请输入新密码' }]}
           />
         </ModalForm>,
+        <Button
+          key={`auth-${record.userId}`}
+          size="small"
+          type="link"
+          onClick={() => {
+            navigate(`/system/auth/user/${record.userId}`);
+          }}
+          icon={<UserOutlined />}
+        ></Button>,
       ],
     });
     return columns;

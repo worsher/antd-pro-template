@@ -31,6 +31,20 @@ export const SystemRouter = [
         access: 'canAccessRoute',
         accessName: 'Role',
       },
+      {
+        path: 'auth/role/:roleId',
+        name: 'auth-role',
+        component: './system/auth/role',
+        access: 'canAccessRoute',
+        accessName: 'Role',
+      },
+      {
+        path: 'auth/user/:userId',
+        name: 'auth-user',
+        component: './system/auth/user',
+        access: 'canAccessRoute',
+        accessName: 'Role',
+      },
     ],
   },
 ];

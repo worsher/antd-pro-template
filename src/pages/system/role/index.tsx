@@ -3,9 +3,16 @@ import { BetaSchemaForm, ModalForm, ProTable, ActionType } from '@ant-design/pro
 import useRoleData from './models/useData';
 import { useState, useRef, useMemo } from 'react';
 import { Button, message, Popconfirm } from 'antd';
-import { DeleteOutlined, EditOutlined, UsergroupAddOutlined } from '@ant-design/icons';
+import {
+  DeleteOutlined,
+  EditOutlined,
+  UsergroupAddOutlined,
+  UserOutlined,
+} from '@ant-design/icons';
+import { useNavigate } from '@umijs/max';
 
 const SystemRoleManage = () => {
+  const navigate = useNavigate();
   const { listColumns, editColumns, deptColumns } = useRoleColumns();
   const {
     getList,
@@ -27,10 +34,12 @@ const SystemRoleManage = () => {
       title: '操作',
       dataIndex: 'action',
       key: 'action',
+      valueType: 'option',
       render: (_: any, record: any) => [
         <Button
           key={`edit-${record.roleId}`}
           type="link"
+          title="编辑"
           size="small"
           icon={<EditOutlined />}
           onClick={async () => {
@@ -48,6 +57,7 @@ const SystemRoleManage = () => {
               key={`dept-trigger-${record.roleId}`}
               type="link"
               size="small"
+              title="数据权限"
               icon={<UsergroupAddOutlined />}
             ></Button>
           }
@@ -84,8 +94,18 @@ const SystemRoleManage = () => {
             actionRef.current?.reload();
           }}
         >
-          <Button type="link" size="small" icon={<DeleteOutlined />}></Button>
+          <Button type="link" title="删除" size="small" icon={<DeleteOutlined />}></Button>
         </Popconfirm>,
+        <Button
+          key={`auth-${record.roleId}`}
+          type="link"
+          size="small"
+          title="用户授权"
+          onClick={() => {
+            navigate(`/system/auth/role/${record.roleId}`);
+          }}
+          icon={<UserOutlined />}
+        ></Button>,
       ],
     });
     return columns;

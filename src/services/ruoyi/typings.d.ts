@@ -6,7 +6,7 @@ declare namespace API {
 
   type authRoleParams = {
     /** 用户ID */
-    userId: number;
+    userId: number | string;
   };
 
   type AvatarVo = {
@@ -18,7 +18,7 @@ declare namespace API {
     /** 角色ID */
     roleId: number;
     /** 用户ID串 */
-    userIds: number[];
+    userIds: number[] | string;
   };
 
   type deptTreeParams = {
@@ -173,9 +173,9 @@ declare namespace API {
 
   type insertAuthRoleParams = {
     /** 用户Id */
-    userId: number;
+    userId: number | string;
     /** 角色ID串 */
-    roleIds: number[];
+    roleIds: number[] | string;
   };
 
   type list10Params = {
@@ -648,7 +648,7 @@ declare namespace API {
     /** 角色ID */
     roleId: number;
     /** 用户ID串 */
-    userIds: number[];
+    userIds: number[] | string;
   };
 
   type syncTenantPackageParams = {
